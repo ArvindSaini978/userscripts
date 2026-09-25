@@ -28,10 +28,10 @@ If clicking opens plain text or fails to prompt an installation dialog:
 ## 📸 Preview
 
 ### Before (Standard Filecrypt)
-![Standard Filecrypt UI](screenshot-1.png)
+![Standard Filecrypt UI](https://github.com/ArvindSaini978/userscripts/blob/main/filecrypt-decrypter/screenshot-1.png)
 
 ### After (With Instant Decrypter & Auto-Resolver)
-![Enhanced Decrypted UI](screenshot-2.png)
+![Enhanced Decrypted UI](https://github.com/ArvindSaini978/userscripts/blob/main/filecrypt-decrypter/screenshot-2.png)
 
 ---
 
@@ -78,4 +78,4 @@ If clicking opens plain text or fails to prompt an installation dialog:
 
 ## License
 
-This userscript is distributed under the [MIT License](/LICENSE).
+This userscript is distributed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
