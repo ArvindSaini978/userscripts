@@ -41,3 +41,18 @@ userscripts/
 │   └── screenshot-*.png        # Visual assets and previews
 ├── LICENSE
 └── README.md
+```
+
+---
+
+## Standards
+
+- **Audit-Friendly:** Scripts are distributed unminified and unobfuscated for transparency.
+- **Native APIs:** Leverages modern browser capabilities (`crypto.subtle`) alongside standard userscript APIs (`GM_xmlhttpRequest`, `GM_setClipboard`).
+- **Semantic Versioning:** Releases strictly follow [SemVer](https://semver.org/).
+
+---
+
+## License
+
+All scripts in this repository are licensed under the [MIT License](/LICENSE).
