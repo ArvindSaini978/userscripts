@@ -6,11 +6,32 @@ A high-speed, automated link decrypter for Filecrypt containers. Built with nati
 
 ---
 
-## ⚡ Direct Install
+## ⚡ Installation
 
-Click the link below with **Violentmonkey** or **Tampermonkey** installed:
+### Option 1: 1-Click Install
+If your userscript manager has link-interception enabled, click below:
 
 👉 **[Install filecrypt-decrypter.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js)**
+
+---
+
+### Option 2: Install via URL (Recommended if 1-Click Fails)
+If clicking opens plain text or fails to prompt an installation dialog:
+
+1. Copy this raw URL:
+   ```text
+   https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js
+   ```
+
+---
+
+## 📸 Preview
+
+### Before (Standard Filecrypt)
+![Standard Filecrypt UI](screenshot-1.png)
+
+### After (With Instant Decrypter & Auto-Resolver)
+![Enhanced Decrypted UI](screenshot-2.png)
 
 ---
 
