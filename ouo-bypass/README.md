@@ -1,4 +1,4 @@
-# Direct ouo.io & ouo.press Instant Fast Bypass
+# ouo.io & ouo.press Bypass — Direct & Instant
 
 A lightweight, high-speed automated bypass userscript for ouo.io and ouo.press shortlinks. Designed with reactive Cloudflare Turnstile activation, zero-wait countdown skipping on Step 2, and background-tab keep-alive spoofing to prevent browser throttling.
 
