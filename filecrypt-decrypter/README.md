@@ -1,4 +1,4 @@
-# Filecrypt Instant Decrypter & Auto-Resolver
+# Filecrypt Instant Decrypter, Bypass & Auto-Resolver
 
 A high-speed, automated link decrypter for Filecrypt containers. Built with native WebCrypto AES-CBC decryption for Click'n'Load (CNL) containers, multi-worker parallel queuing, early-abort network inspection, and isolated per-task retry logic.
 
