@@ -7,8 +7,9 @@ A curated collection of clean, high-performance, and open-source browser userscr
 ## Available Scripts
 
 | Script | Version | Description | Install |
-| :--- | :---: | :--- | :---: |
-| [**Filecrypt Decrypter**](filecrypt-decrypter/) | `v2.0.0` | Instantly decrypts and resolves Filecrypt containers via WebCrypto AES Click'n'Load and a 5-worker parallel queue engine. | [Install](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js) |
+| :--- | :---: | :--- | :--- |
+| [**Filecrypt Decrypter**](filecrypt-decrypter/) | `v2.0.1` | Instantly decrypts and resolves Filecrypt containers via WebCrypto AES Click'n'Load and a 5-worker parallel queue engine. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597407) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js) |
+| [**ouo.io / ouo.press Bypass**](ouo-bypass/) | `v1.0.0` | Zero-wait bypass for ouo.io and ouo.press featuring reactive Turnstile activation and instant countdown skipping. |[Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/YYYYYY) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js) |
 
 ---
 
@@ -21,9 +22,9 @@ To use these scripts, install a compatible userscript manager extension:
 
 ### How to Install Any Script
 
-1. **1-Click Install:** Click **Install** in the table above (or on any individual script page). Your extension will automatically intercept the link and prompt you to install.
+1. **1-Click Install:** Choose **Greasy Fork** or **Direct** in the table above. Your extension will automatically intercept the link and prompt you to install.
 2. **Install via URL (Manual Fallback):** If your browser displays the raw script code instead of prompting:
-   - Right-click the **Install** link and select **Copy link address**.
+   - Right-click the **Direct** link and select **Copy link address**.
    - Open your userscript manager's dashboard.
    - Click the **`+`** icon, select **Install from URL** (or *New -> From URL*), paste the link, and confirm.
 
@@ -42,7 +43,6 @@ userscripts/
 ├── LICENSE
 └── README.md
 ```
-
 ---
 
 ## Standards
@@ -55,4 +55,4 @@ userscripts/
 
 ## License
 
-All scripts in this repository are licensed under the [MIT License](/LICENSE).
+All scripts in this repository are licensed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
