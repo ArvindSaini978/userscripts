@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Direct ouo.io & ouo.press Instant Fast Bypass
+// @name         ouo.io & ouo.press Bypass — Direct & Instant
 // @namespace    https://github.com/ArvindSaini978/userscripts/
-// @version      1.0.0
-// @description  Fast-tracks ouo.io and ouo.press verification steps with zero-wait countdown skips, reactive Turnstile activation, and background tab execution.
+// @version      1.0.1
+// @description  Fast, zero-wait bypass for ouo.io, ouo.press, and ouo shortlinks. Skips countdowns, triggers reactive Turnstile verification, and prevents background tab sleep.
 // @author       ArvindSaini978
 // @license      MIT
 // @match        *://*.ouo.io/*
