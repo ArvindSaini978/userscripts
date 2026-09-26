@@ -8,15 +8,25 @@ A high-speed, automated link decrypter for Filecrypt containers. Built with nati
 
 ## ⚡ Installation
 
-### Option 1: 1-Click Install
-If your userscript manager has link-interception enabled, click below:
+### Option 1: Install from Greasy Fork (Recommended)
+
+Get the script directly with automatic update checks:
+
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597407)**
+
+---
+
+### Option 2: Direct Install via GitHub Raw
+
+If your userscript manager has link interception enabled:
 
 👉 **[Install filecrypt-decrypter.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js)**
 
 ---
 
-### Option 2: Install via URL (Recommended if 1-Click Fails)
-If clicking opens plain text or fails to prompt an installation dialog:
+### Option 3: Manual URL Install (Fallback)
+
+If direct clicking displays plain text instead of opening your script manager:
 
 1. Copy this raw URL:
    ```text
