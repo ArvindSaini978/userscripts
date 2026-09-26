@@ -2,7 +2,7 @@
 // @name         Filecrypt Instant Decrypter, Bypass & Auto-Resolver (CNL + High Speed)
 // @namespace    https://github.com/ArvindSaini978/userscripts/
 // @description  Instantly bypasses, decrypts, and resolves Filecrypt containers. Features AES Click'n'Load decryption, multi-worker queues, auto-retry for dead/slow links, and 1-click batch copy.
-// @version      2.0.3
+// @version      2.0.4
 // @author       ArvindSaini978
 // @license      MIT
 // @match        *://*.filecrypt.cc/*
@@ -14,6 +14,8 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // ==/UserScript==
+
+// v2.0.4 - Webhook synchronization test
 
 /*
  * MIT License
