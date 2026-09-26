@@ -8,7 +8,7 @@ A curated collection of clean, high-performance, and open-source browser userscr
 
 | Script | Version | Description | Install |
 | :--- | :---: | :--- | :--- |
-| [**Filecrypt Decrypter**](filecrypt-decrypter/) | `v2.0.1` | Instantly decrypts and resolves Filecrypt containers via WebCrypto AES Click'n'Load and a 5-worker parallel queue engine. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597407) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js) |
+| [**Filecrypt Decrypter**](filecrypt-decrypter/) | `v2.0.2` | Instantly decrypts and resolves Filecrypt containers via WebCrypto AES Click'n'Load and a 5-worker parallel queue engine. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597407) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js) |
 | [**ouo.io / ouo.press Bypass**](ouo-bypass/) | `v1.0.1` | Zero-wait bypass for ouo.io and ouo.press featuring reactive Turnstile activation and instant countdown skipping. |[Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597471) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js) |
 
 ---
