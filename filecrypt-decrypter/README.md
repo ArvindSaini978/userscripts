@@ -32,6 +32,8 @@ If direct clicking displays plain text instead of opening your script manager:
    ```text
    https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js
    ```
+2. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
+3. Choose **Install from URL**, paste the link, and confirm.
 
 ---
 
