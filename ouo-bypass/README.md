@@ -8,23 +8,32 @@ A lightweight, high-speed automated bypass userscript for ouo.io and ouo.press s
 
 ## ⚡ Installation
 
-### Option 1: 1-Click Install
-If your userscript manager has link interception enabled, click below:
+### Option 1: Install from Greasy Fork (Recommended)
+
+Get the script directly with automatic update checks:
+
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597471)**
+
+---
+
+### Option 2: Direct Install via GitHub Raw
+
+If your userscript manager has link interception enabled:
 
 👉 **[Install ouo-bypass.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js)**
 
 ---
 
-### Option 2: Install via URL (Recommended if 1-Click Fails)
+### Option 3: Manual URL Install (Fallback)
 
-If clicking opens plain text or fails to open an installation dialog:
+If direct clicking displays plain text instead of opening your script manager:
 
 1. Copy this raw script URL:  
    ```
    https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js
    ```
-3. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
-4. Choose **Install from URL**, paste the link, and confirm.
+2. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
+3. Choose **Install from URL**, paste the link, and confirm.
 
 ---
 
