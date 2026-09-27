@@ -9,7 +9,8 @@ A curated collection of clean, high-performance, and open-source browser userscr
 | Script | Description | Install |
 | :--- | :--- | :--- |
 | [**Filecrypt Decrypter**](filecrypt-decrypter/) | Instantly bypasses, decrypts, and resolves Filecrypt containers via WebCrypto AES Click'n'Load and a 5-worker parallel queue engine. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597407) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js) |
-| [**ouo.io / ouo.press Bypass**](ouo-bypass/) | Zero-wait bypass for ouo.io and ouo.press featuring reactive Turnstile activation and instant countdown skipping. |[Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597471) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js) |
+| [**ouo.io / ouo.press Bypass**](ouo-bypass/) | Zero-wait bypass for ouo.io and ouo.press featuring reactive Turnstile activation and instant countdown skipping. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597471) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/ouo-bypass/ouo-bypass.user.js) |
+| [**riviwi.com bypass**](riviwi-bypass/) | Fast, zero-wait bypass for Riviwi shorteners. Skips countdowns, exposes action buttons, and automates multi-step navigation instantly. | [Greasy&nbsp;Fork](https://greasyfork.org/en/scripts/597608) <br> [Direct&nbsp;Raw](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/riviwi-bypass/riviwi-bypass.user.js) |
 
 ---
 
