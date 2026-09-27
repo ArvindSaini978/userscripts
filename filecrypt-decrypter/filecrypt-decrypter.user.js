@@ -2,7 +2,7 @@
 // @name         Filecrypt Instant Decrypter, Bypass & Auto-Resolver (CNL + High Speed)
 // @namespace    https://github.com/ArvindSaini978/userscripts/
 // @description  Instantly bypasses, decrypts, and resolves Filecrypt containers. Features AES Click'n'Load decryption, multi-worker queues, auto-retry for dead/slow links, and 1-click batch copy.
-// @version      2.2.0
+// @version      2.2.1
 // @author       ArvindSaini978
 // @license      MIT
 // @homepageURL  https://github.com/ArvindSaini978/userscripts
@@ -638,7 +638,8 @@
             const task = globalQueue.shift();
             await processTask(task);
             if (globalQueue.length > 0) {
-                await new Promise(r => setTimeout(r, 800));
+                const jitter = Math.floor(Math.random() * 200) + 350; // 350ms to 550ms random delay
+                await new Promise(r => setTimeout(r, jitter));
             }
         }
         activeWorkers--;
