@@ -2,7 +2,7 @@
 // @name         Filecrypt Instant Decrypter, Bypass & Auto-Resolver (CNL + High Speed)
 // @namespace    https://github.com/ArvindSaini978/userscripts/
 // @description  Instantly bypasses, decrypts, and resolves Filecrypt containers. Features AES Click'n'Load decryption, multi-worker queues, auto-retry for dead/slow links, and 1-click batch copy.
-// @version      2.0.5
+// @version      2.1.0
 // @author       ArvindSaini978
 // @license      MIT
 // @homepageURL  https://github.com/ArvindSaini978/userscripts
@@ -307,9 +307,8 @@
     const targetTable = document.querySelector('table');
     if (!targetTable) return;
 
-    const CONCURRENCY = 5;
+    const CONCURRENCY = 3;
     const MAX_RETRIES = 3;
-    const AUTO_DECRYPT_THRESHOLD = 10;
     const MAX_AUTO_RETRY_PASSES = 2; // Auto-retries per task
 
     // 2. Remove "n/a" and "undefined" rows
@@ -591,7 +590,7 @@
             resolved = await resolveLinkHop(task.url, task.host);
             if (resolved) break;
             if (attempt < MAX_RETRIES) {
-                await new Promise(r => setTimeout(r, 150));
+                await new Promise(r => setTimeout(r, 1000));
             }
         }
 
@@ -638,6 +637,9 @@
             while (queue.length > 0) {
                 const task = queue.shift();
                 await processTask(task);
+                if (queue.length > 0) {
+                  await new Promise(r => setTimeout(r, 800));
+                }
             }
             active--;
             if (active === 0 && typeof onComplete === 'function') {
@@ -962,29 +964,13 @@
         }
 
         // Fallback: Queue Resolver Mode
-        modeBadge.textContent = 'Mode: Queue Resolver';
+        modeBadge.textContent = 'Mode: Ready (Select Host)';
         modeBadge.style.background = '#450a0a';
         modeBadge.style.color = '#f87171';
         modeBadge.style.borderColor = '#b91c1c';
 
         decryptGroup.style.display = 'flex';
 
-        if (allRowTasks.length <= AUTO_DECRYPT_THRESHOLD) {
-            modeBadge.textContent = `Mode: Auto-Resolver (${allRowTasks.length})`;
-            modeBadge.style.background = '#312e81';
-            modeBadge.style.color = '#a5b4fc';
-            modeBadge.style.borderColor = '#6366f1';
-
-            runTasksBatch(allRowTasks.filter(t => !t.finalUrl), () => {
-                checkAutoRetryPass();
-            });
-        } else {
-            Object.keys(hostRegistry).forEach(host => {
-                if (host.includes('mega') || host.includes('pixeldrain')) {
-                    runHostQueue(host);
-                }
-            });
-        }
     }
 
     function copyTextToClipboard(text) {
