@@ -12,7 +12,7 @@ A precision-timed automated bypass for `cuty.io` and `cuttty.com`. It safely nav
 
 Get the script directly with automatic update checks:
 
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/XXXXXX)**
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597702)**
 
 ---
 
