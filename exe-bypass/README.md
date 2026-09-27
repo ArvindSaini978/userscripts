@@ -12,7 +12,7 @@ A lightweight, fully automated userscript to bypass `exe.io`, `exey.io`, and `ex
 
 Get the script directly with automatic update checks:
 
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/XXXXX)**
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597700)**
 
 ---
 
