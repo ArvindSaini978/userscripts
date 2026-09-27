@@ -49,11 +49,12 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ## Features
 
-- **Instant Click'n'Load (CNL) Decryption:** Decrypts hidden AES-CBC payload packages directly in the browser via `crypto.subtle` without queuing or waiting.
-- **High-Speed Queue Engine:** Uses 3 asynchronous parallel workers to process links rapidly when CNL is unavailable.
-- **Early-Abort Header Interception:** Detects HTTP `Location:` redirects at `readyState === 2` (Headers Received) and immediately aborts the body download to reduce network bandwidth and response time.
-- **Isolated Per-Task Auto-Retries:** Stalled or throttled links receive an isolated 2-pass automatic retry without interfering with other links or creating infinite loops.
-- **Direct Clipboard Export:** 1-click batch copy controls for single hosts, including automatic link formatting for Pixeldrain CDN mirrors.
+* **Zero-Latency Click'n'Load (CNL) Engine:** Decrypts container packages entirely in-browser using native Web Crypto (`crypto.subtle` AES-CBC), unlocking links instantaneously with zero server requests.
+* **4-Worker Multi-Threaded Queue:** Resolves fallback links via 4 parallel asynchronous workers, calibrated with randomized humanized jitter (`200ms–350ms`) to evade Cloudflare rate limits and HTTP 429 throttling.
+* **Early-Abort Header Interception:** Intercepts HTTP `Location` headers at `readyState === 2` and aborts connections immediately, eliminating redundant HTML body downloads and reducing network overhead.
+* **Isolated Per-Task Retry Pipeline:** Failed or throttled hops trigger an isolated 2-pass auto-retry cycle without blocking the main worker queue or triggering infinite loops.
+* **Dynamic Host Grouping & Formatting:** Aggregates links by provider with color-coded tags and one-click bulk export, including native translation for Pixeldrain fast CDN mirrors (`cdn.pixeldrain.eu.cc`).
+* **SPA & Cloudflare Resilient:** Features a self-polling DOM observer that initializes automatically once background security challenges or asynchronous table loads complete.
 
 ---
 
@@ -69,11 +70,11 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ## Interface Controls
 
-- **⚡ Decrypt:** Triggers decryption for an individual row.
-- **📋 Copy:** Copies the resolved URL for a single row to your clipboard.
-- **Decrypt Host:** Starts bulk resolution for the host selected in the dropdown.
-- **Copy Links:** Copies all resolved URLs for the chosen host, with support for Pixeldrain direct CDN format (`cdn.pixeldrain.eu.cc`).
-- **↻ Retry Failed:** Re-queues failed links once automated retry sweeps are exhausted.
+* **Mode Badge:** Real-time indicator of the script's current state (e.g., `Instant CNL`, `Auto-Retrying`, or `Ready`).
+* **Batch Decrypt & Copy:** Select a specific host from the dropdown to decrypt only those links. Once resolved, 1-click copy exports them all (including pre-formatted Pixeldrain CDN links).
+* **↻ Retry Failed:** Appears automatically to let you re-queue failed links without resetting your completed progress.
+* **Individual Row Actions:** Use **⚡ Decrypt** or **📋 Copy** on specific rows for precision control, or click the main Download pill once it resolves.
+* **Row Pinning:** Click anywhere on a row to highlight it for easy visual tracking across large lists.
 
 ---
 
