@@ -2,7 +2,7 @@
 // @name         Filecrypt Instant Decrypter, Bypass & Auto-Resolver (CNL + High Speed)
 // @namespace    https://github.com/ArvindSaini978/userscripts/
 // @description  Instantly bypasses, decrypts, and resolves Filecrypt containers. Features AES Click'n'Load decryption, multi-worker queues, auto-retry for dead/slow links, and 1-click batch copy.
-// @version      2.1.0
+// @version      2.2.0
 // @author       ArvindSaini978
 // @license      MIT
 // @homepageURL  https://github.com/ArvindSaini978/userscripts
@@ -628,49 +628,61 @@
         updateToolbarState();
     }
 
-    function runTasksBatch(taskList, onComplete) {
-        const queue = [...taskList];
-        let active = 0;
+    // Global Managed Task Queue
+    const globalQueue = [];
+    let activeWorkers = 0;
 
-        async function worker() {
-            active++;
-            while (queue.length > 0) {
-                const task = queue.shift();
-                await processTask(task);
-                if (queue.length > 0) {
-                  await new Promise(r => setTimeout(r, 800));
+    async function queueWorker() {
+        activeWorkers++;
+        while (globalQueue.length > 0) {
+            const task = globalQueue.shift();
+            await processTask(task);
+            if (globalQueue.length > 0) {
+                await new Promise(r => setTimeout(r, 800));
+            }
+        }
+        activeWorkers--;
+
+        // Sync host running states
+        Object.keys(hostRegistry).forEach(h => {
+            const hData = hostRegistry[h];
+            if (hData.isRunning) {
+                const hasPending = hData.items.some(i => !i.finalUrl && (i.isResolving || globalQueue.includes(i)));
+                if (!hasPending) {
+                    hData.isRunning = false;
                 }
             }
-            active--;
-            if (active === 0 && typeof onComplete === 'function') {
-                onComplete();
-            }
-        }
+        });
 
-        const workersCount = Math.min(CONCURRENCY, taskList.length);
-        for (let i = 0; i < workersCount; i++) {
-            worker();
+        updateToolbarState();
+        checkDecryptBtnState();
+        checkAutoRetryPass();
+    }
+
+    function enqueueTasks(taskList) {
+        let addedCount = 0;
+        taskList.forEach(task => {
+            if (!task.finalUrl && !task.isResolving && !globalQueue.includes(task)) {
+                task.autoRetriesLeft = MAX_AUTO_RETRY_PASSES;
+                globalQueue.push(task);
+                addedCount++;
+            }
+        });
+
+        const neededWorkers = Math.min(CONCURRENCY, globalQueue.length + activeWorkers) - activeWorkers;
+        for (let i = 0; i < neededWorkers; i++) {
+            queueWorker();
         }
+        return addedCount;
     }
 
     function runHostQueue(host) {
         const hData = hostRegistry[host];
-        if (!hData || hData.isRunning) return;
+        if (!hData) return;
         hData.isRunning = true;
-
-        const queue = hData.items.filter(i => !i.finalUrl);
-        // Reset retry quota for all items belonging to this host
-        queue.forEach(item => { item.autoRetriesLeft = MAX_AUTO_RETRY_PASSES; });
-
-        runTasksBatch(queue, () => {
-            hData.isRunning = false;
-            if (decryptSelect && decryptSelect.value === host) {
-                decryptBtn.disabled = false;
-                decryptBtn.textContent = 'Decrypt Host';
-            }
-            updateToolbarState();
-            checkAutoRetryPass();
-        });
+        const pendingItems = hData.items.filter(i => !i.finalUrl);
+        enqueueTasks(pendingItems);
+        checkDecryptBtnState();
     }
 
     // 8. Isolated Per-Task Auto-Retry Sweep
@@ -694,12 +706,9 @@
             modeBadge.style.color = '#fef08a';
 
             setTimeout(() => {
-                runTasksBatch(eligibleTasks, () => {
-                    isAutoRetrying = false;
-                    modeBadge.textContent = originalBadgeText;
-                    updateToolbarState();
-                    checkAutoRetryPass(); // Chain next pass if any tasks still have quota
-                });
+                isAutoRetrying = false;
+                modeBadge.textContent = originalBadgeText;
+                enqueueTasks(eligibleTasks);
             }, 1500);
         } else {
             checkFailedTasks();
@@ -707,6 +716,32 @@
     }
 
     // 9. Toolbar State Updates & Strict Failed-Task Hiding
+
+    function checkDecryptBtnState() {
+        if (!decryptSelect || !decryptBtn) return;
+        const host = decryptSelect.value;
+        const hData = hostRegistry[host];
+
+        if (!hData) return;
+
+        if (hData.completed === hData.total && hData.total > 0) {
+            decryptBtn.disabled = true;
+            decryptBtn.textContent = 'All Decrypted';
+            decryptBtn.style.opacity = '0.6';
+            decryptBtn.style.cursor = 'not-allowed';
+        } else if (hData.isRunning) {
+            decryptBtn.disabled = true;
+            decryptBtn.textContent = 'Decrypting...';
+            decryptBtn.style.opacity = '0.7';
+            decryptBtn.style.cursor = 'wait';
+        } else {
+            decryptBtn.disabled = false;
+            decryptBtn.textContent = 'Decrypt Host';
+            decryptBtn.style.opacity = '1';
+            decryptBtn.style.cursor = 'pointer';
+        }
+    }
+
     function updateToolbarState() {
         const pdKey = Object.keys(hostRegistry).find(h => h.includes('pixeldrain'));
         const pd = pdKey ? hostRegistry[pdKey] : null;
@@ -727,6 +762,7 @@
         }
 
         checkCopyBtnState();
+        checkDecryptBtnState();
         checkFailedTasks();
     }
 
@@ -770,6 +806,7 @@
     }
 
     if (copySelect) copySelect.addEventListener('change', checkCopyBtnState);
+    if (decryptSelect) decryptSelect.addEventListener('change', checkDecryptBtnState);
 
     // 10. Toolbar Click Handlers
     retryAllBtn.addEventListener('click', () => {
@@ -779,26 +816,16 @@
         retryAllBtn.disabled = true;
         retryAllBtn.textContent = 'Retrying...';
 
-        // Manual sweep resets quota to give them another 2-pass window
-        failedTasks.forEach(t => { t.autoRetriesLeft = MAX_AUTO_RETRY_PASSES; });
-
-        runTasksBatch(failedTasks, () => {
-            checkAutoRetryPass();
-        });
+        failedTasks.forEach(t => { t.isFailed = false; });
+        enqueueTasks(failedTasks);
     });
 
     decryptBtn.addEventListener('click', () => {
         const host = decryptSelect.value;
         if (!host) return;
         const hData = hostRegistry[host];
-        if (hData && hData.completed === hData.total && hData.total > 0) {
-            decryptBtn.textContent = 'Already Decrypted!';
-            setTimeout(() => { decryptBtn.textContent = 'Decrypt Host'; }, 1500);
-            return;
-        }
+        if (hData && hData.completed === hData.total && hData.total > 0) return;
 
-        decryptBtn.disabled = true;
-        decryptBtn.textContent = 'Decrypting...';
         runHostQueue(host);
     });
 
