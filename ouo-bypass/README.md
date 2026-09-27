@@ -54,15 +54,6 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## How It Works
-
-| Step | Page Phase | Bypass Behavior |
-| :--- | :--- | :--- |
-| **Step 1** | Captcha / Landing Form | Monitors the invisible Cloudflare Turnstile widget; immediately executes the verification flow once the challenge is bound. |
-| **Step 2** | Destination Redirect Form | Detects `#form-go`, removes the disabled state from the redirect button, and submits immediately without waiting for the timer to count down. |
-
----
-
 ## License
 
 This userscript is distributed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
