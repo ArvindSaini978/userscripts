@@ -50,10 +50,9 @@ If direct clicking displays plain text instead of opening your script manager:
 ## Features
 
 - **Instant Click'n'Load (CNL) Decryption:** Decrypts hidden AES-CBC payload packages directly in the browser via `crypto.subtle` without queuing or waiting.
-- **High-Speed Queue Engine:** Uses 5 asynchronous parallel workers to process links rapidly when CNL is unavailable.
+- **High-Speed Queue Engine:** Uses 3 asynchronous parallel workers to process links rapidly when CNL is unavailable.
 - **Early-Abort Header Interception:** Detects HTTP `Location:` redirects at `readyState === 2` (Headers Received) and immediately aborts the body download to reduce network bandwidth and response time.
 - **Isolated Per-Task Auto-Retries:** Stalled or throttled links receive an isolated 2-pass automatic retry without interfering with other links or creating infinite loops.
-- **Smart Automated Host Decryption:** Automatically handles high-priority hosts (like Mega and Pixeldrain) without requiring manual interaction.
 - **Direct Clipboard Export:** 1-click batch copy controls for single hosts, including automatic link formatting for Pixeldrain CDN mirrors.
 
 ---
