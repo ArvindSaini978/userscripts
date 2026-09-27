@@ -12,7 +12,7 @@ A lightweight, zero-latency automated bypass userscript for riviwi.com shortener
 
 Get the script directly with automatic update checks:
 
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/xxxxx)**
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597608)**
 
 ---
 
