@@ -68,16 +68,6 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## How It Works
-
-| Mode | Trigger Condition | Behavior |
-| :--- | :--- | :--- |
-| **Instant CNL** | Valid `CNLPOP` / encrypted inputs found | Decrypts container payload instantly via WebCrypto and maps resolved URLs to all rows in milliseconds. |
-| **Auto-Resolver** | Total links in container $\le$ 10 | Automatically queues and resolves all links simultaneously. |
-| **Queue Resolver** | Total links in container $>$ 10 | Automatically resolves Mega and Pixeldrain mirrors; leaves other hosts accessible via 1-click row triggers. |
-
----
-
 ## Interface Controls
 
 - **⚡ Decrypt:** Triggers decryption for an individual row.
