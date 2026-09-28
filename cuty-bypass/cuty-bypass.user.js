@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Cuty.io & Cuttty Bypass — Fast, Anti-Ad & Auto Countdown
 // @namespace    https://github.com/ArvindSaini978/userscripts/
-// @version      1.0.0
+// @version      1.1.0
 // @description  Fast, safe automated bypass for cuty.io and cuttty.com shortlinks. Neutralizes clickjack ad overlays, accelerates the countdown timer safely, auto-submits Cloudflare Turnstile with manual fallback alerts, and updates tab titles with real-time progress.
 // @author       ArvindSaini978
 // @license      MIT
@@ -128,14 +128,16 @@
     window.adBlockerDetected = false;
 
     // Fast-decode embedded Base64 URLs if present
-    const TARGET_PATTERN = /(pixeldrain\.[a-z]{2,}\/u\/|filecrypt\.[a-z]{2,}\/|dramaday\.[a-z]{2,}\/)/i;
+    const TARGET_PATTERN = /(pixeldrain|filecrypt|dramaday|mega\.nz|drive\.google|mediafire|1fichier|krakenfiles|gofile|qiwi|rapidgator|ddownload|katfile|nitroflare|turbobit)/i;
+    const AD_PATTERN = /(cuty\.io|cuttty|exe\.io|exey|adsterra|doubleclick|monetag|hilltopads)/i;
+
     try {
         const params = new URLSearchParams(window.location.search);
         if (params.has('url')) {
-            let encoded = params.get('url');
-            while (encoded.length % 4 !== 0) encoded += '=';
-            const decoded = atob(encoded);
-            if (TARGET_PATTERN.test(decoded)) {
+            let cleaned = decodeURIComponent(params.get('url')).trim().replace(/-/g, '+').replace(/_/g, '/');
+            while (cleaned.length % 4 !== 0) cleaned += '=';
+            const decoded = atob(cleaned);
+            if (TARGET_PATTERN.test(decoded) && !AD_PATTERN.test(decoded)) {
                 window.location.replace(decoded);
                 return;
             }
@@ -222,7 +224,7 @@
         const loop = setInterval(() => {
             createHUD();
 
-            if (TARGET_PATTERN.test(window.location.href)) {
+            if (!window.location.hostname.includes('cuty.io') && !window.location.hostname.includes('cuttty.com')) {
                 clearInterval(loop);
                 updateHUD("Target Reached!", "✅ Done!", "#22c55e");
                 return;
@@ -247,7 +249,6 @@
                 } else if (!cfToken.value) {
                     const elapsed = now - turnstileStartTime;
                     if (elapsed > 7500) {
-                        // Takes too long: Scroll to it and prompt manual user click
                         updateHUD("Please click the Captcha manually!", "⚠️ Solve Captcha", "#ef4444");
                         if (turnstileBox && !turnstileBox.dataset.scrolled) {
                             turnstileBox.dataset.scrolled = 'true';
