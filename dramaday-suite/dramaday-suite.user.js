@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         DramaDay Suite — Shortlink Bypasser, Base64 Decoder & Anti-Ad Shield
 // @namespace    https://github.com/ArvindSaini978/userscripts/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Fast automated bypasser for DramaDay, Exe.io, Exey, Cuty.io, Ouo.io, and Riviwi. Skips countdown timers, neutralizes ad popups/clickjacks, solves Turnstile, and decodes Base64 download links instantly.
 // @author       ArvindSaini978
+// @license      MIT
 // @match        *://*.dramaday.me/*
 // @match        *://dramaday.me/*
 // @match        *://*.exe.io/*
