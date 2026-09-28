@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Exe.io & Exeygo Bypass — Fast, Anti-Ad & Auto Countdown
 // @namespace    https://github.com/ArvindSaini978/userscripts/
-// @version      1.0.0
+// @version      1.1.0
 // @description  Fast and safe automated bypass for exe.io, exey.io and exeygo.com. Blocks persistent clickjack overlays, accelerates the final countdown timer, auto-submits Cloudflare Turnstile with manual fallback, and updates tab titles with real-time progress.
 // @author       ArvindSaini978
 // @license      MIT
@@ -137,14 +137,16 @@
     };
 
     // Fast-decode embedded Base64 URLs
-    const TARGET_PATTERN = /(pixeldrain\.[a-z]{2,}\/u\/|filecrypt\.[a-z]{2,}\/|dramaday\.[a-z]{2,}\/)/i;
+    const TARGET_PATTERN = /(pixeldrain|filecrypt|dramaday|mega\.nz|drive\.google|mediafire|1fichier|krakenfiles|gofile|qiwi|rapidgator|ddownload|katfile|nitroflare|turbobit)/i;
+    const AD_PATTERN = /(exe\.io|exey\.io|exeygo|cuty\.io|cuttty|adsterra|doubleclick|monetag|hilltopads)/i;
+
     try {
         const params = new URLSearchParams(window.location.search);
         if (params.has('url')) {
-            let encoded = params.get('url');
-            while (encoded.length % 4 !== 0) encoded += '=';
-            const decoded = atob(encoded);
-            if (TARGET_PATTERN.test(decoded)) {
+            let cleaned = decodeURIComponent(params.get('url')).trim().replace(/-/g, '+').replace(/_/g, '/');
+            while (cleaned.length % 4 !== 0) cleaned += '=';
+            const decoded = atob(cleaned);
+            if (TARGET_PATTERN.test(decoded) && !AD_PATTERN.test(decoded)) {
                 window.location.replace(decoded);
                 return;
             }
@@ -240,7 +242,7 @@
         const loop = setInterval(() => {
             createHUD();
 
-            if (TARGET_PATTERN.test(window.location.href)) {
+            if (!window.location.hostname.includes('exe.io') && !window.location.hostname.includes('exey.io') && !window.location.hostname.includes('exeygo.com')) {
                 clearInterval(loop);
                 updateHUD("Target Reached!", "✅ Done!", "#22c55e");
                 return;
@@ -296,7 +298,7 @@
             if (getLinkMatches.length > 0) {
                 const getLink = getLinkMatches[getLinkMatches.length - 1];
                 const href = getLink.getAttribute('href');
-                if (href && TARGET_PATTERN.test(href)) {
+                if (href && TARGET_PATTERN.test(href) && !AD_PATTERN.test(href)) {
                     clearInterval(loop);
                     updateHUD("Redirecting...", "🚀 Redirecting", "#22c55e");
                     window.location.replace(href);
