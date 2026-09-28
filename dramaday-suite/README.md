@@ -12,7 +12,7 @@ A lightweight, zero-wait automation suite designed for **DramaDay.me** and major
 
 Get the script directly with automatic update checks:
 
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/XXXXXX)**
+👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597754)**
 
 ---
 
