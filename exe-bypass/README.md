@@ -1,60 +1,37 @@
-# Exe.io & Exeygo Bypass — Fast, Anti-Ad & Auto Countdown
+---
 
 A lightweight, fully automated userscript to bypass `exe.io`, `exey.io`, and `exeygo.com`. It safely accelerates mandatory wait times, blocks clickjack ads, and navigates steps seamlessly in the background.
 
-[![Install Directly](https://img.shields.io/badge/Install%20with-Userscript%20Manager-blue?style=for-the-badge&logo=tampermonkey)](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/exe-bypass/exe-bypass.user.js)
+> **Important Usage Note:** Please process or open only **1 link at a time**. Opening multiple `exe.io` or `exeygo` tabs simultaneously will trigger session conflicts and send you into Cloudflare anti-bot loops.
 
 ---
 
-## ⚡ Installation
+### Features
 
-### Option 1: Install from Greasy Fork (Recommended)
-
-Get the script directly with automatic update checks:
-
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597700)**
-
----
-
-### Option 2: Direct Install via GitHub Raw
-
-If your userscript manager has link interception enabled:
-
-👉 **[Install exe-bypass.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/exe-bypass/exe-bypass.user.js)**
+* **Safe Timer Acceleration:** Compresses the countdown using 650ms ticks (~3.9s total) to clear server validation at the fastest possible speed.
+* **Smart Captcha Fallback:** Auto-submits Cloudflare Turnstile, with a 7.5-second timeout that alerts you via the tab title to click manually if it hangs.
+* **Dynamic Tab Titles:** Mirrors real-time progress directly to your browser tab (e.g., `⏳ 4s • Auto Bypass | Exe`), letting you monitor it in the background.
+* **Background Execution:** Spoofs visibility states to prevent the browser from throttling the timer when the tab is out of focus.
+* **Ad & Clickjack Shield:** Neutralizes invisible overlay ads and intercepts known pop-under scripts before they load.
 
 ---
 
-### Option 3: Manual URL Install (Fallback)
+### Supported Domains
 
-If direct clicking displays plain text instead of opening your script manager:
-
-1. Copy this raw script URL:  
-   ```
-   https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/exe-bypass/exe-bypass.user.js
-   ```
-2. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
-3. Choose **Install from URL**, paste the link, and confirm.
+* `*.exe.io`
+* `*.exey.io`
+* `*.exeygo.com`
 
 ---
 
-## Features
+### About & Maintenance
 
-- **Safe Timer Acceleration:** Compresses the countdown using 650ms ticks (~3.9s total) to clear server validation at the fastest possible speed.
-- **Smart Captcha Fallback:** Auto-submits Cloudflare Turnstile, with a 7.5-second timeout that alerts you via the tab title to click manually if it hangs.
-- **Dynamic Tab Titles:** Mirrors real-time progress directly to your browser tab (e.g., `⏳ 4s • Auto Bypass | Exe`), letting you monitor it in the background.
-- **Background Execution:** Spoofs visibility states to prevent the browser from throttling the timer when the tab is out of focus.
-- **Ad & Clickjack Shield:** Neutralizes invisible overlay ads and intercepts known pop-under scripts before they load.
+This is a personal hobby project that I originally built for my own day-to-day use. I decided to publish it on Greasy Fork so other users could benefit from it as well. 
+
+Because it is a personal hobby project, updates will not follow a regular schedule. I will maintain and update it whenever I have free time or when changes affect my own usage.
 
 ---
 
-## Supported Domains
+### License
 
-- `*.exe.io`
-- `*.exey.io`
-- `*.exeygo.com`
-
----
-
-## License
-
-This userscript is distributed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
+This userscript is released under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
