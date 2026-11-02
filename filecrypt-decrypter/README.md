@@ -1,53 +1,22 @@
-# Filecrypt Instant Decrypter, Bypass & Auto-Resolver
+---
 
+#### Filecrypt Instant Decrypter, Bypass & Auto-Resolver
 A high-speed, automated link decrypter for Filecrypt containers. Built with native WebCrypto AES-CBC decryption for Click'n'Load (CNL) containers, multi-worker parallel queuing, early-abort network inspection, and isolated per-task retry logic.
 
-[![Install Directly](https://img.shields.io/badge/Install%20with-Userscript%20Manager-blue?style=for-the-badge&logo=tampermonkey)](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js)
-
 ---
 
-## ⚡ Installation
 
-### Option 1: Install from Greasy Fork (Recommended)
+### 📸 Preview
 
-Get the script directly with automatic update checks:
-
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597407)**
-
----
-
-### Option 2: Direct Install via GitHub Raw
-
-If your userscript manager has link interception enabled:
-
-👉 **[Install filecrypt-decrypter.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js)**
-
----
-
-### Option 3: Manual URL Install (Fallback)
-
-If direct clicking displays plain text instead of opening your script manager:
-
-1. Copy this raw URL:
-   ```text
-   https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/filecrypt-decrypter.user.js
-   ```
-2. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
-3. Choose **Install from URL**, paste the link, and confirm.
-
----
-
-## 📸 Preview
-
-### Before (Standard Filecrypt)
+#### Before (Standard Filecrypt)
 ![Standard Filecrypt UI](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/screenshot-1.png)
 
-### After (With Instant Decrypter & Auto-Resolver)
+#### After (With Instant Decrypter & Auto-Resolver)
 ![Enhanced Decrypted UI](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/filecrypt-decrypter/screenshot-2.png)
 
 ---
 
-## Features
+### Features
 
 * **Zero-Latency Click'n'Load (CNL) Engine:** Decrypts container packages entirely in-browser using native Web Crypto (`crypto.subtle` AES-CBC), unlocking links instantaneously with zero server requests.
 * **4-Worker Multi-Threaded Queue:** Resolves fallback links via 4 parallel asynchronous workers, calibrated with randomized humanized jitter (`200ms–350ms`) to evade Cloudflare rate limits and HTTP 429 throttling.
@@ -58,7 +27,7 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## Supported Domains
+### Supported Domains
 
 - `filecrypt.cc`
 - `filecrypt.to`
@@ -68,7 +37,7 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## Interface Controls
+### Interface Controls
 
 * **Mode Badge:** Real-time indicator of the script's current state (e.g., `Instant CNL`, `Auto-Retrying`, or `Ready`).
 * **Batch Decrypt & Copy:** Select a specific host from the dropdown to decrypt only those links. Once resolved, 1-click copy exports them all (including pre-formatted Pixeldrain CDN links).
@@ -78,6 +47,14 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## License
+### About & Maintenance
+
+This is a personal hobby project that I originally built for my own day-to-day use. I decided to publish it on Greasy Fork so other users could benefit from it as well. 
+
+Because it is a personal hobby project, updates will not follow a regular schedule. I will maintain and update it whenever I have free time or when changes affect my own usage.
+
+---
+
+### License
 
 This userscript is distributed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
