@@ -1,6 +1,7 @@
 ---
 
 #### Exe.io & Exeygo Bypass — Fast, Anti-Ad & Auto Countdown
+
 A lightweight, fully automated userscript to bypass `exe.io`, `exey.io`, and `exeygo.com`. It safely accelerates mandatory wait times, blocks clickjack ads, and navigates steps seamlessly in the background.
 
 > **Important Usage Note:** Please process or open only **1 link at a time**. Opening multiple `exe.io` or `exeygo` tabs simultaneously will trigger session conflicts and send you into Cloudflare anti-bot loops.
