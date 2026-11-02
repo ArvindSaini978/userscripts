@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Exe.io & Exeygo Bypass — Fast, Anti-Ad & Auto Countdown
 // @namespace    https://github.com/ArvindSaini978/userscripts/
-// @version      1.1.0
+// @version      1.2.0
 // @description  Fast and safe automated bypass for exe.io, exey.io and exeygo.com. Blocks persistent clickjack overlays, accelerates the final countdown timer, auto-submits Cloudflare Turnstile with manual fallback, and updates tab titles with real-time progress.
 // @author       ArvindSaini978
 // @license      MIT
@@ -41,20 +41,18 @@
 (() => {
     'use strict';
 
+    // Exit immediately if running inside an ad or captcha iframe
     if (window.top !== window.self) return;
 
-    // --- 1. SCRIPT KILLER (Neutralizes ad networks at the source) ---
+    // Block dynamically injected ad-network scripts from loading
     const AD_DOMAINS = ['llvpn.com', 'cleverwebserver.com', 'abscloud.org', 'doubleclick.net'];
     const originalCreateElement = document.createElement;
-
     document.createElement = function(tagName, options) {
         const el = originalCreateElement.call(document, tagName, options);
         if (tagName && tagName.toLowerCase() === 'script') {
             const originalSetAttribute = el.setAttribute;
             el.setAttribute = function(name, val) {
-                if (name === 'src' && AD_DOMAINS.some(d => String(val).includes(d))) {
-                    return;
-                }
+                if (name === 'src' && AD_DOMAINS.some(d => String(val).includes(d))) return;
                 return originalSetAttribute.apply(this, arguments);
             };
             Object.defineProperty(el, 'src', {
@@ -62,66 +60,58 @@
                     if (AD_DOMAINS.some(d => String(url).includes(d))) return;
                     el.setAttribute('src', url);
                 },
-                get() {
-                    return el.getAttribute('src') || '';
-                },
+                get() { return el.getAttribute('src') || ''; },
                 configurable: true
             });
         }
         return el;
     };
 
-    // --- 2. SAFE TIMER ACCELERATOR (Accelerates countdown while passing token checks) ---
+    // Accelerate 1-second countdown intervals (1000ms -> 650ms) safely
     const originalSetInterval = window.setInterval;
     window.setInterval = function(callback, delay, ...args) {
-        if (delay === 1000 || (delay >= 950 && delay <= 1050)) {
-            delay = 650;
-        }
+        if (delay === 1000 || (delay >= 950 && delay <= 1050)) delay = 650;
         return originalSetInterval(callback, delay, ...args);
     };
 
-    // --- 3. CLICK-THROUGH SHIELD (Stops overlay ad clicks across all steps) ---
+    // Inject persistent CSS shield to block invisible full-screen ad overlays
     const clickjackShield = document.createElement('style');
     clickjackShield.id = 'anti-clickjack-shield';
     clickjackShield.textContent = `
         html > div:not(#exe-bypass-badge),
         html > iframe,
         div[style*="2147483647"]:not(#exe-bypass-badge),
-        .ad-element,
-        [id^="ad-"],
-        [class*="ad-container"],
-        [class*="clever-core"] {
+        .ad-element, [id^="ad-"], [class*="ad-container"], [class*="clever-core"] {
             pointer-events: none !important;
             opacity: 0 !important;
             background: transparent !important;
         }
-
         body,
-        body *:not(.ad-element):not([class*="ad-container"]):not([class*="clever-core"]),
+        body *:not(.ad-element):not([class*="ad-container"]):not([class*="clever-core"]):not([style*="2147483647"]),
         #exe-bypass-badge {
             pointer-events: auto !important;
         }
     `;
     (document.head || document.documentElement).appendChild(clickjackShield);
 
-    const styleObserver = new MutationObserver(() => {
+    // Re-attach CSS shield if page scripts strip it from the DOM
+    new MutationObserver(() => {
         if (!document.getElementById('anti-clickjack-shield')) {
             (document.head || document.documentElement).appendChild(clickjackShield);
         }
-    });
-    styleObserver.observe(document.documentElement, { childList: true, subtree: true });
+    }).observe(document.documentElement, { childList: true, subtree: true });
 
-    // --- 4. ANTI-SLEEP / BACKGROUND EXECUTION ---
+    // Spoof tab visibility so timers keep running in background tabs
     try {
         Object.defineProperty(document, 'hidden', { get: () => false, configurable: true });
         Object.defineProperty(document, 'visibilityState', { get: () => 'visible', configurable: true });
         Object.defineProperty(document, 'webkitVisibilityState', { get: () => 'visible', configurable: true });
-        window.addEventListener('visibilitychange', (e) => e.stopImmediatePropagation(), true);
-        window.addEventListener('webkitvisibilitychange', (e) => e.stopImmediatePropagation(), true);
-        window.addEventListener('blur', (e) => e.stopImmediatePropagation(), true);
+        window.addEventListener('visibilitychange', e => e.stopImmediatePropagation(), true);
+        window.addEventListener('webkitvisibilitychange', e => e.stopImmediatePropagation(), true);
+        window.addEventListener('blur', e => e.stopImmediatePropagation(), true);
     } catch (e) {}
 
-    // --- 5. ANTI-POPUP & HISTORY HIJACK DEFUSERS ---
+    // Neutralize popup tabs, adblock flags, and back-button hijacks
     window.open = function() { return null; };
     window.canRunAds = true;
     window.isAdBlockActive = false;
@@ -136,9 +126,9 @@
         return originalPushState.apply(this, arguments);
     };
 
-    // Fast-decode embedded Base64 URLs
+    // Fast-redirect when destination link is already Base64-encoded in the URL query
     const TARGET_PATTERN = /(pixeldrain|filecrypt|dramaday|mega\.nz|drive\.google|mediafire|1fichier|krakenfiles|gofile|qiwi|rapidgator|ddownload|katfile|nitroflare|turbobit)/i;
-    const AD_PATTERN = /(exe\.io|exey\.io|exeygo|cuty\.io|cuttty|adsterra|doubleclick|monetag|hilltopads)/i;
+    const AD_PATTERN = /(exe\.io|exey\.io|exeygo|cuty\.io|cuttty|adsterra|doubleclick|monetag|hilltopads|sowve\.com)/i;
 
     try {
         const params = new URLSearchParams(window.location.search);
@@ -153,15 +143,11 @@
         }
     } catch (e) {}
 
-    // --- 6. STATUS HUD & TAB TITLE COMPONENT ---
-    function setTabTitle(shortStatus) {
-        document.title = `${shortStatus} • Auto Bypass | Exe`;
-    }
-
+    // Create and update the floating status HUD and tab title
     function createHUD() {
         if (document.getElementById('exe-bypass-badge')) return;
-        const targetContainer = document.body || document.documentElement;
-        if (!targetContainer) return;
+        const container = document.body || document.documentElement;
+        if (!container) return;
 
         const hud = document.createElement('div');
         hud.id = 'exe-bypass-badge';
@@ -172,26 +158,16 @@
             </div>
         `;
         hud.style.cssText = `
-            position: fixed !important;
-            top: 24px !important;
-            right: 24px !important;
-            background: rgba(30, 41, 59, 0.88) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            color: #f1f5f9 !important;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            padding: 12px 20px !important;
-            border-radius: 12px !important;
-            border: 1px solid rgba(255, 255, 255, 0.16) !important;
-            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.35), 0 8px 12px -6px rgba(0, 0, 0, 0.2) !important;
-            z-index: 2147483647 !important;
-            letter-spacing: 0.35px !important;
-            pointer-events: none !important;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            position: fixed !important; top: 24px !important; right: 24px !important;
+            background: rgba(30, 41, 59, 0.88) !important; backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important; color: #f1f5f9 !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+            font-size: 15px !important; font-weight: 600 !important; padding: 12px 20px !important;
+            border-radius: 12px !important; border: 1px solid rgba(255, 255, 255, 0.16) !important;
+            box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.35) !important;
+            z-index: 2147483647 !important; pointer-events: none !important;
         `;
-        targetContainer.appendChild(hud);
+        container.appendChild(hud);
     }
 
     function updateHUD(hudMsg, shortTabMsg, color) {
@@ -203,140 +179,98 @@
             dot.style.background = color;
             dot.style.boxShadow = `0 0 10px ${color}`;
         }
-        if (shortTabMsg) {
-            setTabTitle(shortTabMsg);
-        }
+        if (shortTabMsg) document.title = `${shortTabMsg} • Auto Bypass | Exe`;
     }
 
-    // Rogue click interceptor
-    document.addEventListener('click', function(e) {
-        const target = e.target;
-        const isLegit = target.tagName === 'BUTTON' ||
-                        target.tagName === 'INPUT' ||
-                        target.closest('form') ||
-                        target.closest('.cf-turnstile') ||
-                        target.closest('#exe-bypass-badge');
-        if (!isLegit) {
-            e.stopPropagation();
-        }
+    // Block rogue click hijacks outside forms, buttons, and Turnstile widgets
+    document.addEventListener('click', (e) => {
+        const t = e.target;
+        const isLegit = t.tagName === 'BUTTON' || t.tagName === 'INPUT' ||
+                        t.closest('form') || t.closest('.cf-turnstile') || t.closest('#exe-bypass-badge');
+        if (!isLegit) e.stopPropagation();
     }, true);
 
-    function isElementVisible(el) {
-        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
-    }
-
-    function findMatchingElements(regex) {
-        const all = Array.from(document.querySelectorAll('a, button, input, div, span'));
-        return all.filter(el => {
-            if (!isElementVisible(el)) return false;
-            return regex.test((el.innerText || el.value || '').trim());
-        });
-    }
-
-    // --- 7. AUTOMATION ENGINE ---
+    // Main 3-step state machine engine
     document.addEventListener('DOMContentLoaded', () => {
         createHUD();
-        let lastActionTime = 0;
         let turnstileStartTime = null;
 
         const loop = setInterval(() => {
             createHUD();
+            const now = Date.now();
 
-            if (!window.location.hostname.includes('exe.io') && !window.location.hostname.includes('exey.io') && !window.location.hostname.includes('exeygo.com')) {
+            // Delete injected max z-index clickjack overlays from the DOM
+            document.querySelectorAll('div[style*="2147483647"]').forEach(overlay => {
+                if (overlay.id !== 'exe-bypass-badge') overlay.remove();
+            });
+
+            // Stop polling once redirected to the final target site
+            if (!/(exe\.io|exey\.io|exeygo\.com)/i.test(window.location.hostname)) {
                 clearInterval(loop);
                 updateHUD("Target Reached!", "✅ Done!", "#22c55e");
                 return;
             }
 
-            const now = Date.now();
-
-            // Step 2: Captcha / Cloudflare Turnstile Check
-            const captchaForm = document.getElementById('link-view');
-            const cfToken = document.querySelector('[name="cf-turnstile-response"]');
+            const step1Form = document.getElementById('free-submit-form');
             const turnstileBox = document.querySelector('.cf-turnstile');
+            const step3Form = document.getElementById('submit-form');
+            const countdownEl = document.getElementById('countdown');
 
-            if (captchaForm && cfToken) {
+            // STEP 1: Submit initial "Continue with ads" form immediately
+            if (step1Form && !turnstileBox) {
+                if (!step1Form.dataset.triggered) {
+                    step1Form.dataset.triggered = 'true';
+                    updateHUD("Forcing Initial Step...", "⚡ Step 1", "#38bdf8");
+                    HTMLFormElement.prototype.submit.call(step1Form);
+                }
+                return;
+            }
+
+            // STEP 2: Wait for Cloudflare Turnstile token, then submit form
+            if (turnstileBox) {
+                const cfToken = document.querySelector('[name="cf-turnstile-response"]');
                 if (!turnstileStartTime) turnstileStartTime = now;
 
-                if (cfToken.value && !captchaForm.dataset.triggered) {
-                    captchaForm.dataset.triggered = 'true';
-                    updateHUD("Turnstile Solved! Instant Forward...", "⚡ Verifying", "#22c55e");
-                    HTMLFormElement.prototype.submit.call(captchaForm);
-                    lastActionTime = now;
-                    return;
-                } else if (!cfToken.value) {
-                    const elapsed = now - turnstileStartTime;
-                    if (elapsed > 7500) {
-                        updateHUD("Please click the Captcha manually!", "⚠️ Solve Captcha", "#ef4444");
-                        if (turnstileBox && !turnstileBox.dataset.scrolled) {
-                            turnstileBox.dataset.scrolled = 'true';
-                            turnstileBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    } else {
-                        updateHUD("Waiting for Cloudflare Turnstile...", "🛡️ Captcha", "#f59e0b");
+                if (cfToken && cfToken.value) {
+                    const captchaForm = turnstileBox.closest('form') || step1Form;
+                    if (captchaForm && !captchaForm.dataset.triggered) {
+                        captchaForm.dataset.triggered = 'true';
+                        updateHUD("Turnstile Solved! Instant Forward...", "⚡ Verifying", "#22c55e");
+                        HTMLFormElement.prototype.submit.call(captchaForm);
                     }
-                    return;
+                } else if (now - turnstileStartTime > 7500) {
+                    updateHUD("Please click the Captcha manually!", "⚠️ Solve Captcha", "#ef4444");
+                    if (!turnstileBox.dataset.scrolled) {
+                        turnstileBox.dataset.scrolled = 'true';
+                        turnstileBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    updateHUD("Waiting for Cloudflare Turnstile...", "🛡️ Captcha", "#f59e0b");
                 }
-            }
-
-            if (now - lastActionTime < 500) return;
-
-            // Step 1: Initial Exe.io Bypass
-            const beforeCaptchaForm = document.getElementById('before-captcha');
-            if (beforeCaptchaForm) {
-                if (!beforeCaptchaForm.dataset.triggered) {
-                    beforeCaptchaForm.dataset.triggered = 'true';
-                    updateHUD("Forcing Initial Step...", "⚡ Step 1", "#38bdf8");
-                    HTMLFormElement.prototype.submit.call(beforeCaptchaForm);
-                }
-                lastActionTime = now;
                 return;
             }
 
-            // Step 3: Natural countdown wait and automatic link clicking
-            const getLinkMatches = findMatchingElements(/^get link$/i);
-            if (getLinkMatches.length > 0) {
-                const getLink = getLinkMatches[getLinkMatches.length - 1];
-                const href = getLink.getAttribute('href');
-                if (href && TARGET_PATTERN.test(href) && !AD_PATTERN.test(href)) {
-                    clearInterval(loop);
-                    updateHUD("Redirecting...", "🚀 Redirecting", "#22c55e");
-                    window.location.replace(href);
-                    return;
-                }
-                updateHUD("Clicking 'Get Link'...", "🚀 Redirecting", "#38bdf8");
-                getLink.click();
-                lastActionTime = now;
-                return;
-            }
+            // STEP 3: Wait for countdown completion, then click the unlocked submit button
+            if (step3Form && countdownEl) {
+                const state = countdownEl.getAttribute('data-state');
+                const btn = document.getElementById('submit-button');
 
-            // Step 3 Timer Display Status
-            const timerSpan = document.getElementById('timer');
-            if (timerSpan && isElementVisible(timerSpan)) {
-                const rawSeconds = timerSpan.textContent.trim().replace(/\D+/g, '');
-                if (rawSeconds && rawSeconds !== '0') {
-                    updateHUD(`Waiting for timer: ${rawSeconds}s`, `⏳ ${rawSeconds}s`, "#f59e0b");
-                } else if (rawSeconds === '0') {
-                    updateHUD("Finalizing Link...", "⚡ Unlocking", "#38bdf8");
-                }
-            }
-
-            // Fallback continue buttons
-            const continueMatches = findMatchingElements(/^continue$|click here to continue/i);
-            if (continueMatches.length > 0) {
-                const cont = continueMatches[continueMatches.length - 1];
-                if (!cont.disabled && cont.getAttribute('aria-disabled') !== 'true') {
-                    const parentForm = cont.closest('form');
-                    if (parentForm) {
-                        updateHUD("Submitting 'Continue' Form...", "⚡ Step 1", "#38bdf8");
-                        HTMLFormElement.prototype.submit.call(parentForm);
-                    } else {
-                        updateHUD("Clicking 'Continue'...", "⚡ Step 1", "#38bdf8");
-                        cont.click();
+                if (state === 'done' && btn && !btn.disabled) {
+                    if (!step3Form.dataset.triggered) {
+                        step3Form.dataset.triggered = 'true';
+                        clearInterval(loop);
+                        updateHUD("Redirecting...", "🚀 Redirecting", "#22c55e");
+                        btn.click();
                     }
-                    lastActionTime = now;
-                    return;
+                } else {
+                    const secText = countdownEl.textContent.trim().replace(/\D+/g, '');
+                    if (secText && secText !== '0') {
+                        updateHUD(`Waiting for timer: ${secText}s`, `⏳ ${secText}s`, "#f59e0b");
+                    } else {
+                        updateHUD("Finalizing Link...", "⚡ Unlocking", "#f59e0b");
+                    }
                 }
+                return;
             }
         }, 200);
     });
