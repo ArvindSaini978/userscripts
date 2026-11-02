@@ -1,43 +1,12 @@
-# Cuty.io & Cuttty Bypass — Fast, Anti-Ad & Auto Countdown
+---
+
+#### Cuty.io & Cuttty Bypass — Fast, Anti-Ad & Auto Countdown
 
 A precision-timed automated bypass for `cuty.io` and `cuttty.com`. It safely navigates backend anti-bot thresholds and custom JavaScript events while keeping your clicks safe from hidden ad overlays.
 
-[![Install Directly](https://img.shields.io/badge/Install%20with-Userscript%20Manager-blue?style=for-the-badge&logo=tampermonkey)](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/cuty-bypass/cuty-bypass.user.js)
-
 ---
 
-## ⚡ Installation
-
-### Option 1: Install from Greasy Fork (Recommended)
-
-Get the script directly with automatic update checks:
-
-👉 **[Install from Greasy Fork](https://greasyfork.org/en/scripts/597702)**
-
----
-
-### Option 2: Direct Install via GitHub Raw
-
-If your userscript manager has link interception enabled:
-
-👉 **[Install cuty-bypass.user.js](https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/cuty-bypass/cuty-bypass.user.js)**
-
----
-
-### Option 3: Manual URL Install (Fallback)
-
-If direct clicking displays plain text instead of opening your script manager:
-
-1. Copy this raw script URL:  
-   ```
-   https://raw.githubusercontent.com/ArvindSaini978/userscripts/main/cuty-bypass/cuty-bypass.user.js
-   ```
-2. Open your userscript manager dashboard (Tampermonkey, Violentmonkey, etc.).
-3. Choose **Install from URL**, paste the link, and confirm.
-
----
-
-## Features
+### Features
 
 - **Calibrated Acceleration:** Uses 750ms ticks (~6.0s total) to bypass the countdown safely without triggering Cuty's strict server-side resets.
 - **Native Event Navigation:** Simulates real `.click()` events to ensure Cuty's required token-generation scripts fire correctly before routing.
@@ -48,13 +17,21 @@ If direct clicking displays plain text instead of opening your script manager:
 
 ---
 
-## Supported Domains
+### Supported Domains
 
 - `*.cuty.io`
 - `*.cuttty.com`
 
 ---
 
-## License
+### About & Maintenance
+
+This is a personal hobby project that I originally built for my own day-to-day use. I decided to publish it on Greasy Fork so other users could benefit from it as well. 
+
+Because it is a personal hobby project, updates will not follow a regular schedule. I will maintain and update it whenever I have free time or when changes affect my own usage.
+
+---
+
+### License
 
 This userscript is distributed under the [MIT License](https://github.com/ArvindSaini978/userscripts/blob/main/LICENSE).
