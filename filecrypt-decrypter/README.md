@@ -6,6 +6,15 @@ A high-speed, automated link decrypter for Filecrypt containers. Built with nati
 ---
 
 
+> [!WARNING]
+>
+> Filecrypt recently updated their captcha and bot protection, which has broken this script's manual link resolver. 
+>
+>Currently, **Instant Decryption** will still work perfectly if Click'n'Load (CNL) data is present on the page. However, if CNL is missing and the script attempts to manually decrypt the hosts, it will fail. I am aware of this issue, but I will not have the time to investigate a bypass or push a fix for a while.
+
+---
+
+
 ### 📸 Preview
 
 #### Before (Standard Filecrypt)
