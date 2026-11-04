@@ -6,7 +6,7 @@ A high-speed, automated link decrypter for Filecrypt containers. Built with nati
 ---
 
 
-> [!WARNING]
+> ### ⚠️ Current Status & Known Issues
 >
 > Filecrypt recently updated their captcha and bot protection, which has broken this script's manual link resolver. 
 >
