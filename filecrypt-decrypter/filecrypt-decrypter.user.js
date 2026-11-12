@@ -2,7 +2,7 @@
 // @name         Filecrypt Instant Decrypter, Bypass & Auto-Resolver (CNL + High Speed)
 // @namespace    https://github.com/ArvindSaini978/userscripts/
 // @description  Instantly bypasses, decrypts, and resolves Filecrypt containers. Features AES Click'n'Load decryption, multi-worker queues, auto-retry for dead/slow links, and 1-click batch copy.
-// @version      2.3.0
+// @version      2.4.0
 // @author       ArvindSaini978
 // @license      MIT
 // @homepageURL  https://github.com/ArvindSaini978/userscripts
@@ -49,6 +49,30 @@
     // 1. Injected Styles
     const style = document.createElement('style');
     style.textContent = `
+        /* Unified Dark Theme across all Filecrypt containers */
+        html, body, #page, .content.big, .box.small {
+            background-color: #0b0f17 !important;
+            color: #f1f5f9 !important;
+        }
+        .window.container {
+            background-color: rgba(15, 23, 42, 0.75) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 10px !important;
+            padding: 16px 24px !important;
+            color: #f8fafc !important;
+        }
+        .window.container h2,
+        .window.container p,
+        .window.container small,
+        tbody tr td,
+        tbody tr td[title] {
+            color: #e2e8f0 !important;
+        }
+        tbody tr > td {
+            background-color: rgba(15, 23, 42, 0.65) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
+
         td a.button.download::after,
         td a.button.download::before {
             content: none !important;
@@ -78,7 +102,8 @@
             border-collapse: separate !important;
             border-spacing: 0 !important;
         }
-        #box_content, .box_small, .div_window_container {
+        #page, #box_content, .box_small, .div_window_container,
+        .content.big, .box.small, .window.container {
             overflow: visible !important;
         }
 
@@ -127,24 +152,30 @@
             filter: brightness(0.95) !important;
         }
 
-        .fc-main-btn {
+        .fc-main-btn,
+        .container table a.fc-main-btn {
             flex-direction: column !important;
             height: 40px !important;
             min-width: 140px !important;
             padding: 2px 14px !important;
             text-decoration: none !important;
-            color: #fff !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important;
             border: none !important;
             line-height: 1.2 !important;
+            opacity: 1 !important;
         }
         .fc-main-btn .fc-dl-top {
             font-size: 11px !important;
-            font-weight: 500 !important;
-            opacity: 0.85 !important;
+            font-weight: 600 !important;
+            color: #ffffff !important;
+            opacity: 1 !important;
         }
         .fc-main-btn .fc-dl-host {
             font-size: 12px !important;
-            font-weight: 700 !important;
+            font-weight: 800 !important;
+            color: #ffffff !important;
+            opacity: 1 !important;
             white-space: nowrap !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
@@ -239,15 +270,39 @@
         }
 
         .fc-status-pill {
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 6px;
+            display: inline-flex !important;
+            align-items: center !important;
+            font-size: 11px !important;
+            padding: 4px 10px !important;
+            border-radius: 6px !important;
             background: #0f172a;
             color: #38bdf8;
             border: 1px solid #0284c7;
-            font-weight: 600;
-            letter-spacing: 0.2px;
+            font-weight: 600 !important;
+            letter-spacing: 0.2px !important;
             transition: all 0.2s ease;
+        }
+
+        #fc-native-toolbar {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 9999 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            margin: 15px 0 12px 0 !important;
+            padding: 10px 14px !important;
+            background: rgba(11, 15, 23, 0.3) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45) !important;
+            font-family: system-ui, -apple-system, sans-serif !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
         }
 
         #fc-retry-all-btn {
@@ -307,7 +362,7 @@
 
     // Initialization loop to handle slow loading pages / Cloudflare
     function initTracker() {
-        const targetTable = document.querySelector('table');
+        const targetTable = document.querySelector('.window.container table, .box.small table, table');
         if (!targetTable) {
             setTimeout(initTracker, 300);
             return;
@@ -322,23 +377,23 @@
         const MAX_RETRIES = 3;
         const MAX_AUTO_RETRY_PASSES = 2; // Auto-retries per task
 
-        // 2. Remove "n/a" and "undefined" rows
-        document.querySelectorAll('tr').forEach(row => {
-            const text = (row.textContent || '').trim().toLowerCase();
-            if (text.includes('n/a') || text.includes('undefined') || !row.querySelector('a[href*="/Link/"]')) {
-                if (row.querySelector('td')) row.remove();
+        // 2. Keep "n/a" and "undefined" rows intact — only remove empty spacer rows without download buttons
+        targetTable.querySelectorAll('tbody tr, tr').forEach(row => {
+            const hasDownloadAction = row.querySelector('a[href*="/Link/"], a.button.download, button.download');
+            if (!hasDownloadAction && row.querySelector('td')) {
+                row.remove();
             }
         });
 
         // 3. Host Helpers
         function cleanHostName(rawHost) {
             if (rawHost === 'pixeldrain-cdn') return 'CDN Pixeldrain';
-            const base = rawHost.replace(/\.(com|nz|net|co|now|me|to|cc|org|io|cloud|download)/gi, '');
+            const base = rawHost.split('.')[0];
             return base.charAt(0).toUpperCase() + base.slice(1);
         }
 
         function parseHostFromRow(row) {
-            const extLink = row.querySelector('a.external_link');
+            const extLink = row.querySelector('a.external_link, td[title] span a');
             if (extLink) {
                 const linkText = (extLink.textContent || '').trim().toLowerCase();
                 if (linkText) return linkText;
@@ -349,37 +404,68 @@
             const rowText = (row.textContent || '').toLowerCase();
             if (rowText.includes('mega')) return 'mega.nz';
             if (rowText.includes('pixeldrain')) return 'pixeldrain';
+            if (rowText.includes('send.now')) return 'send.now';
+            if (rowText.includes('terabytez')) return 'terabytez.org';
+            if (rowText.includes('filestore')) return 'filestore.me';
+            if (rowText.includes('datanodes')) return 'datanodes.to';
+            if (rowText.includes('fuckingfast')) return 'fuckingfast.co';
             return 'Other';
         }
 
         function getHostColor(host) {
-            if (host.includes('mega')) return '#dc2626';
-            if (host.includes('pixeldrain')) return '#0284c7';
-            if (host.includes('akirabox')) return '#4f46e5';
-            if (host.includes('buzzheavier')) return '#d97706';
-            if (host.includes('fileq')) return '#7c3aed';
-            if (host.includes('send')) return '#10b981';
-            return '#475569';
+            const h = host.toLowerCase();
+            if (h.includes('mega')) return '#dc2626';        // Vibrant Red
+            if (h.includes('pixeldrain')) return '#0284c7';  // Vibrant Sky Blue
+            if (h.includes('akirabox')) return '#4f46e5';    // Vibrant Indigo
+            if (h.includes('buzzheavier')) return '#ea580c'; // Vibrant Orange
+            if (h.includes('fileq')) return '#7c3aed';       // Vibrant Violet
+            if (h.includes('send')) return '#059669';        // Vibrant Emerald
+            if (h.includes('datanodes')) return '#0d9488';   // Vibrant Teal
+            if (h.includes('fuckingfast')) return '#db2777'; // Vibrant Pink
+            if (h.includes('filestore')) return '#2563eb';   // Vibrant Royal Blue
+            if (h.includes('terabytez')) return '#9333ea';   // Vibrant Purple
+            if (h.includes('gofile')) return '#16a34a';      // Vibrant Green
+            if (h.includes('1fichier')) return '#f97316';    // Bright Orange
+            if (h.includes('rapidgator')) return '#e11d48';  // Vibrant Crimson
+            if (h.includes('katfile')) return '#0891b2';     // Vibrant Cyan
+
+            // Mid-tone vibrant fallback palette for any unknown host
+            const vibrantPalette = [
+                '#dc2626', '#db2777', '#9333ea', '#7c3aed',
+                '#4f46e5', '#2563eb', '#0284c7', '#0891b2',
+                '#0d9488', '#059669', '#ea580c', '#e11d48'
+            ];
+            let hash = 0;
+            for (let i = 0; i < h.length; i++) {
+                hash = h.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return vibrantPalette[Math.abs(hash) % vibrantPalette.length];
         }
 
-        // 4. Scan valid rows & configure layout
-        const validRows = document.querySelectorAll('tr');
+        // 4. Scan valid rows & configure layout (including "undefined" and "n/a" rows)
+        const validRows = targetTable.querySelectorAll('tr');
         const hostRegistry = {};
         const allRowTasks = [];
         let lastEpisodeKey = '';
 
         validRows.forEach((row) => {
-            const linkElem = row.querySelector('a[href*="/Link/"]');
+            const linkElem = row.querySelector('a[href*="/Link/"], a.button.download');
             if (!linkElem) return;
 
-            const titleTd = row.querySelector('td[title]');
-            const filename = titleTd ? (titleTd.getAttribute('title') || '') : '';
-            const epMatch = filename.match(/S\d+E\d+/i);
-            const epKey = epMatch ? epMatch[0].toUpperCase() : filename;
+            const rawHref = linkElem.getAttribute('href');
+            if (!rawHref) return;
 
-            if (epKey && epKey !== lastEpisodeKey) {
-                row.classList.add('fc-episode-start');
-                lastEpisodeKey = epKey;
+            const titleTd = row.querySelector('td[title]');
+            const rawTitle = titleTd ? (titleTd.getAttribute('title') || '').trim() : '';
+            const isPlaceholderTitle = !rawTitle || rawTitle.toLowerCase() === 'undefined' || rawTitle.toLowerCase() === 'n/a';
+
+            if (!isPlaceholderTitle) {
+                const epMatch = rawTitle.match(/S\d+E\d+/i);
+                const epKey = epMatch ? epMatch[0].toUpperCase() : rawTitle;
+                if (epKey && epKey !== lastEpisodeKey) {
+                    row.classList.add('fc-episode-start');
+                    lastEpisodeKey = epKey;
+                }
             }
 
             row.addEventListener('click', (e) => {
@@ -414,7 +500,7 @@
                 <span class="fc-dl-top">Download</span>
                 <span class="fc-dl-host">(${displayName})</span>
             `;
-            mainBtn.href = linkElem.getAttribute('href');
+            mainBtn.href = rawHref;
             cell.appendChild(mainBtn);
 
             const sideSlot = document.createElement('div');
@@ -422,7 +508,7 @@
             cell.appendChild(sideSlot);
 
             const itemObj = {
-                url: new URL(linkElem.getAttribute('href'), window.location.origin).href,
+                url: new URL(rawHref, window.location.origin).href,
                 finalUrl: null,
                 host: host,
                 displayName: displayName,
@@ -441,30 +527,20 @@
         });
 
         const hostList = Object.keys(hostRegistry);
-        if (hostList.length === 0) return;
 
-        // 5. Top Toolbar Setup
+        // 5. Always Render Top Toolbar (Even if 1 link or 0 links are detected)
         const toolbar = document.createElement('div');
         toolbar.id = 'fc-native-toolbar';
-        toolbar.style = `
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0 12px 0;
-            font-family: system-ui, sans-serif;
-            flex-wrap: wrap;
-            gap: 12px;
-        `;
 
         toolbar.innerHTML = `
-            <!-- Left Side: Status & Retry Failed Button -->
+            <!-- Left Side: Status & Retry Failed Button (Always Visible) -->
             <div id="fc-left-controls" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <span id="fc-mode-badge" class="fc-status-pill">Detecting Mode...</span>
                 <button id="fc-retry-all-btn" type="button" class="fc-btn-base">↻ Retry Failed (0)</button>
             </div>
 
             <!-- Right Side: Decrypt Host Group + Universal Copy Group -->
-            <div id="fc-right-controls" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-left: auto;">
+            <div id="fc-right-controls" style="display: ${hostList.length > 0 ? 'flex' : 'none'}; gap: 12px; align-items: center; flex-wrap: wrap; margin-left: auto;">
                 <div id="fc-decrypt-group" style="display: none; gap: 6px; align-items: center;">
                     <select id="fc-decrypt-select" class="fc-select"></select>
                     <button id="fc-decrypt-btn" type="button" class="fc-btn-base">Decrypt Host</button>
@@ -648,7 +724,7 @@
                 const task = globalQueue.shift();
                 await processTask(task);
                 if (globalQueue.length > 0) {
-                    const jitter = Math.floor(Math.random() * 150) + 200; // 200ms to 350ms random delay
+                    const jitter = Math.floor(Math.random() * 150) + 200;
                     await new Promise(r => setTimeout(r, jitter));
                 }
             }
@@ -906,7 +982,7 @@
             const remainingUrls = [...urls];
 
             allRowTasks.forEach(task => {
-                if (task.finalUrl) return;
+                if (task.finalUrl || task.host === 'Other') return;
                 const hostKeyword = task.host.split('.')[0].toLowerCase();
                 const idx = remainingUrls.findIndex(u => u.toLowerCase().includes(hostKeyword));
                 if (idx !== -1) {
@@ -959,7 +1035,6 @@
                     cryptedB64 = cryptedInput.value;
                     const jkVal = jkInput.value;
 
-                    // FIXED: RCE Vulnerability Removed. Safely extract 32-character hex key via regex.
                     const exactMatch = jkVal.match(/return\s*['"]([0-9a-fA-F]{32})['"]/);
                     const fallbackMatch = jkVal.match(/([0-9a-fA-F]{32})/);
 
@@ -989,7 +1064,7 @@
                     modeBadge.style.color = '#34d399';
                     modeBadge.style.borderColor = '#10b981';
 
-                    decryptGroup.style.display = 'none';
+                    if (decryptGroup) decryptGroup.style.display = 'none';
 
                     distributeDecryptedUrls(cnlLinks);
                     return;
@@ -999,15 +1074,17 @@
             }
 
             // Fallback: Queue Resolver Mode
-            modeBadge.textContent = 'Mode: Ready (Select Host)';
+            modeBadge.textContent = hostList.length > 0 ? 'Mode: Ready (Select Host)' : 'Mode: Active (No Standard Links)';
             modeBadge.style.background = '#450a0a';
             modeBadge.style.color = '#f87171';
             modeBadge.style.borderColor = '#b91c1c';
 
-            decryptGroup.style.display = 'flex';
+            if (decryptGroup && hostList.length > 0) {
+                decryptGroup.style.display = 'flex';
+            }
         }
 
-        // FIXED: Modern Clipboard Fallback implementation
+        // Modern Clipboard Fallback implementation
         function copyTextToClipboard(text) {
             if (typeof GM_setClipboard !== 'undefined') {
                 GM_setClipboard(text, 'text');
